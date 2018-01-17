@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { findDOMNode } from 'react-dom';
 import PropTypes from 'prop-types';
 import CommentList from './CommentList';
 import toggleOpen from '../decorators/toggleOpen';
@@ -22,16 +23,29 @@ class Article extends Component {
         return (
             <section>
                 {article.text}
-                <CommentList comments={article.comments} />
+                <CommentList comments={article.comments} ref={this.setContainerRef} />
             </section>
         )
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log('----', 'updating', this.props.isOpen, nextProps.isOpen)
+    }
+
+    componentWillMount() {
+        console.log('----', 'mounting')
+    }
+
+    setContainerRef = ref => {
+        this.container = ref;
+        console.log('---', findDOMNode(ref));
     }
 
     render() {
         const { article, isOpen, toggleOpen } = this.props;
 
         return (
-            <div>
+            <div ref={this.setContainerRef}>
                 <h3>{article.title}</h3>
                 <button onClick={toggleOpen}>
                     {isOpen ? 'Close' : 'Open'}
@@ -40,6 +54,10 @@ class Article extends Component {
             </div>
         );
     }
+
+    componentDidMount() {
+        console.log('----', 'mounted')
+    }
 }
 
-export default toggleOpen(Article);
+export default Article;
